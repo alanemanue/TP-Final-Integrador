@@ -66,11 +66,15 @@ export default function Home() {
         </select>
         <select className="border rounded px-3 py-2" name="category" value={filters.category} onChange={handleChange}>
           <option value="">Todas las categorías</option>
-          <option value="alimentacion">Alimentación</option>
-          <option value="transporte">Transporte</option>
-          <option value="ocio">Ocio</option>
-          <option value="salud">Salud</option>
-          <option value="salario">Salario</option>
+          <option value="alimentacion">🍔 Alimentación</option>
+          <option value="transporte">🚗 Transporte</option>
+          <option value="ocio">🎮 Ocio</option>
+          <option value="salud">🏥 Salud</option>
+          <option value="salario">💼 Salario</option>
+          <option value="servicios">💡 Servicios</option>
+          <option value="vivienda">🏠 Vivienda</option>
+          <option value="educacion">📚 Educación</option>
+          <option value="otros">📦 Otros</option>
         </select>
         <input className="border rounded px-3 py-2" type="date" name="dateFrom" value={filters.dateFrom} onChange={handleChange} />
         <input className="border rounded px-3 py-2" type="date" name="dateTo" value={filters.dateTo} onChange={handleChange} />
