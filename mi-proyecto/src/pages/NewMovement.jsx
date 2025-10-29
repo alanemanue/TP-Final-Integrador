@@ -10,6 +10,11 @@ const validationSchema = Yup.object({
     .min(3, "La descripción debe tener al menos 3 caracteres")
     .required("La descripción es requerida"),
   category: Yup.string().required("Debe seleccionar una categoría"),
+  customCategory: Yup.string().when("category", {
+    is: (val) => val === "__other__",
+    then: (schema) => schema.trim().min(2, "Ingrese una categoría válida").required("Ingrese una categoría"),
+    otherwise: (schema) => schema.notRequired(),
+  }),
   type: Yup.string()
     .oneOf(["ingreso", "gasto"], "Tipo inválido")
     .required("Debe seleccionar un tipo"),
@@ -22,7 +27,7 @@ const validationSchema = Yup.object({
 });
 
 export default function NewMovement() {
-  const { addMovement } = useMovements();
+  const { addMovement, categories } = useMovements();
   const navigate = useNavigate();
 
   // Obtener fecha actual en formato YYYY-MM-DD para el valor por defecto
@@ -36,6 +41,7 @@ export default function NewMovement() {
         initialValues={{ 
           description: "", 
           category: "", 
+          customCategory: "",
           type: "gasto", 
           amount: "", 
           date: today 
@@ -43,7 +49,12 @@ export default function NewMovement() {
         validationSchema={validationSchema}
         onSubmit={(values, { setSubmitting }) => {
           try {
-            addMovement(values);
+            const payload = {
+              ...values,
+              category: values.category === "__other__" ? values.customCategory.trim() : values.category,
+            };
+            delete payload.customCategory;
+            addMovement(payload);
             navigate("/");
           } catch (error) {
             console.error("Error al guardar el movimiento:", error);
@@ -115,21 +126,39 @@ export default function NewMovement() {
                   }`}
                 >
                   <option value="">-- Seleccione una categoría --</option>
-                  <option value="alimentacion">🍔 Alimentación</option>
-                  <option value="transporte">🚗 Transporte</option>
-                  <option value="ocio">🎮 Ocio</option>
-                  <option value="salud">🏥 Salud</option>
-                  <option value="salario">💼 Salario</option>
-                  <option value="servicios">💡 Servicios</option>
-                  <option value="vivienda">🏠 Vivienda</option>
-                  <option value="educacion">📚 Educación</option>
-                  <option value="otros">📦 Otros</option>
+                  {categories.map((c) => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                  <option value="__other__">➕ Otra…</option>
                 </Field>
                 <ErrorMessage
                   name="category"
                   component="div"
                   className="text-sm text-red-600 dark:text-red-400 mt-1 font-medium"
                 />
+                {values.category === "__other__" && (
+                  <div className="mt-2">
+                    <label htmlFor="customCategory" className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
+                      Nueva categoría
+                    </label>
+                    <Field
+                      id="customCategory"
+                      name="customCategory"
+                      type="text"
+                      placeholder="Ej: regalos, mascotas, etc."
+                      className={`w-full border rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors ${
+                        errors.customCategory && touched.customCategory
+                          ? "border-red-500 bg-red-50 dark:bg-red-900/20"
+                          : "border-gray-300 dark:border-slate-600 dark:bg-slate-700"
+                      }`}
+                    />
+                    <ErrorMessage
+                      name="customCategory"
+                      component="div"
+                      className="text-sm text-red-600 dark:text-red-400 mt-1 font-medium"
+                    />
+                  </div>
+                )}
               </div>
             </div>
 

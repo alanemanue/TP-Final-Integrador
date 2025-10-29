@@ -16,10 +16,36 @@ export default function ExpensesByCategory({ movements = [] }) {
     datasets: [
       {
         data: Object.values(totals),
+        backgroundColor: [
+          "#ef4444",
+          "#f97316",
+          "#eab308",
+          "#22c55e",
+          "#06b6d4",
+          "#3b82f6",
+          "#8b5cf6",
+          "#ec4899",
+          "#14b8a6",
+        ],
+        borderWidth: 1,
       },
     ],
   };
-  return <Doughnut data={data} />;
+  if (!labels.length) {
+    return <p className="text-sm text-slate-500 dark:text-slate-400">No hay gastos para mostrar.</p>;
+  }
+  const options = {
+    plugins: {
+      legend: { position: "bottom" },
+      tooltip: { callbacks: { label: (ctx) => `${ctx.label}: $${ctx.formattedValue}` } },
+    },
+    maintainAspectRatio: false,
+  };
+  return (
+    <div style={{ height: 320 }}>
+      <Doughnut data={data} options={options} />
+    </div>
+  );
 }
 
 

@@ -25,13 +25,20 @@ export function MovementsProvider({ children }) {
     setMovements([]);
   };
 
+  const categories = useMemo(() => {
+    const set = new Set();
+    for (const m of movements) if (m.category) set.add(m.category);
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
+  }, [movements]);
+
   const value = useMemo(() => ({
     movements,
+    categories,
     addMovement,
     updateMovement,
     deleteMovement,
     resetMovements
-  }), [movements]);
+  }), [movements, categories]);
 
   return <MovementsContext.Provider value={value}>{children}</MovementsContext.Provider>;
 }

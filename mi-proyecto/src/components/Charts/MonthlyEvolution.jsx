@@ -49,12 +49,33 @@ export default function MonthlyEvolution({ movements = [], monthsBack = 6 }) {
   const data = {
     labels,
     datasets: [
-      { label: "Ingresos", data: ingresosData, backgroundColor: "#22c55e" },
-      { label: "Gastos", data: gastosData, backgroundColor: "#ef4444" },
+      { label: "Ingresos", data: ingresosData, backgroundColor: "#22c55e", borderColor: "#16a34a" },
+      { label: "Gastos", data: gastosData, backgroundColor: "#ef4444", borderColor: "#dc2626" },
     ],
   };
 
-  return <Bar data={data} />;
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: { position: "bottom" },
+      tooltip: {
+        callbacks: {
+          label: (ctx) => `${ctx.dataset.label}: $${ctx.formattedValue}`,
+        },
+      },
+    },
+    scales: {
+      x: { grid: { display: false } },
+      y: { grid: { color: "#e5e7eb" }, beginAtZero: true },
+    },
+    maintainAspectRatio: false,
+  };
+
+  return (
+    <div style={{ height: 360 }}>
+      <Bar data={data} options={options} />
+    </div>
+  );
 }
 
 
